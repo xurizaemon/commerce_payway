@@ -21,6 +21,14 @@ function commerce_payway_net_menu() {
     'access arguments' => array('access content'),
     'file' => 'commerce_payway_net.pages.inc',
   );
+  $items['payway_net_return/%commerce_order'] = array(
+    'title' => t('Payway return'),
+    'page callback' => 'commerce_payway_net_return_page',
+    'page arguments' => array(1),
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('access content'),
+    'file' => 'commerce_payway_net.pages.inc',
+  );
   return $items;
 }
 
@@ -139,16 +147,18 @@ function commerce_payway_net_submit_form($payment_method, $pane_values, $checkou
 /**
  * Generate form which will be used to redirect browser to PayWay.
  *
- * I'd prefer to move the drupal_goto() to $form['#redirect'] or even the hook_submit() for the previous 
+ * I'd prefer to move the drupal_goto() to $form['#redirect'] or even the hook_submit() for the previous
  * form, but that interferes with the other submit functions. So here it is.
  */
 function commerce_payway_net_redirect_form($form, &$form_state, $order, $payment_method) {
   module_load_include('inc', 'commerce_payway_net');
-  
-  $return_link_url = url('checkout/' . $order->order_id . '/payment/return/' . $order->data['payment_redirect_key'], array(), array('absolute' => TRUE));
+  // This return link is appropriate for successful transactions. Payway will
+  // show it even if the transaction was a failure. We therefore do not show it.
+  //$return_link_url = url('checkout/' . $order->order_id . '/payment/return/' . $order->data['payment_redirect_key'], array('absolute' => TRUE));
+  // Instead we use our own return page which implementsno state changes.
+  $return_link_url = url('payway_net_return/' . $order->order_id, array('absolute' => TRUE));
   // Commerce has price in cents, Payway wants dollars
   $payment_amount = $order->commerce_order_total['und'][0]['amount'] / 100;
-  $return_link_url = url($return_link_url, array('absolute' => TRUE));
   $payway_base_url = $payment_method['settings']['commerce_payway_net_payWayBaseUrl'];
   $biller_code = $payment_method['settings']['commerce_payway_net_billerCode'];
   $token_variables = array(
@@ -166,11 +176,11 @@ function commerce_payway_net_redirect_form($form, &$form_state, $order, $payment
   try {
     $token = _commerce_payway_net_get_token($token_variables);
     $url = $payway_base_url .
-      'MakePayment?biller_code=' . $biller_code . 
+      'MakePayment?biller_code=' . $biller_code .
       '&token=' . $token;
     drupal_goto($url);
   }
   catch (Exception $e) {
-    form_set_error('Unable to communicate with PayWay Net payment gateway.');    
+    form_set_error('Unable to communicate with PayWay Net payment gateway.');
   }
 }
