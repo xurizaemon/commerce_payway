@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Performs database updates and uninstallation cleanup for the Commerce Payway Net module.
+ */
+
+/**
+ * #2246907 - Clear cache to register new return callback.
+ */
+function commerce_payway_net_update_7100() {
+  cache_clear_all(NULL, 'cache_menu');
+}
