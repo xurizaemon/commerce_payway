@@ -128,7 +128,13 @@ function commerce_payway_net_return_page($order) {
   else {
     drupal_set_message(t("Your order was not fully processed at Payway. It is being reviewed."), 'warning');
   }
-  // Redirect to the users version of the order.
-  $order_url = 'user/' . $order->uid . '/orders/' . $order->order_number;
-  drupal_goto($order_url);
+  // Redirect to the users version of the order if the user matches the order id.
+  global $user;
+  if ($order->uid && $user->uid == $order->uid) {
+    $order_url = 'user/' . $order->uid . '/orders/' . $order->order_number;
+    drupal_goto($order_url);
+  }
+  else {
+    drupal_goto('checkout/' . $order->order_id . '/complete');
+  }
 }
