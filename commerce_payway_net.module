@@ -56,14 +56,14 @@ function commerce_payway_net_commerce_payment_method_info() {
 function commerce_payway_net_settings_form($settings = NULL) {
   $form = array();
   $settings = (array)$settings + array(
-  'commerce_payway_net_encryptionKey' => '',
-  'commerce_payway_net_billerCode' => '',
-  'commerce_payway_net_username' => '',
-  'commerce_payway_net_password' => '',
-  'commerce_payway_net_caCertsFile' => '',
-  'commerce_payway_net_merchantId' => 'TEST',
-  'commerce_payway_net_paypalEmail' => 'test@example.com',
-  'commerce_payway_net_payWayBaseUrl' => 'https://www.payway.com.au/',
+    'commerce_payway_net_encryptionKey' => '',
+    'commerce_payway_net_billerCode' => '',
+    'commerce_payway_net_username' => '',
+    'commerce_payway_net_password' => '',
+    'commerce_payway_net_caCertsFile' => '',
+    'commerce_payway_net_merchantId' => 'TEST',
+    'commerce_payway_net_paypalEmail' => 'test@example.com',
+    'commerce_payway_net_payWayBaseUrl' => 'https://www.payway.com.au/',
   );
   $form['commerce_payway_net_encryptionKey'] = array(
     '#type' => 'textfield',
